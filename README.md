@@ -112,6 +112,7 @@ Detected anomalies automatically generate Suricata drop rules and are saved to `
 ## Documentation
 - See [DESIGN.md](DESIGN.md) for architecture and design rationale
 - See [TESTING.md](TESTING.md) for evaluation methodology and results
+- See [DATA_INTEGRATION.md](DATA_INTEGRATION.md) for real dataset integration (NSL-KDD, CICIDS2018)
 - See `docs/Final_Report_CISC699_Upreti.docx` for the complete research report
 
 ## Performance
@@ -125,4 +126,4 @@ The ML-integrated NGFW achieves:
 Open source
 
 ## Contact
-Unique Upreti | upreti.unique@gmail.com
+Unique Upreti | uniqueupreti44@gmail.com
