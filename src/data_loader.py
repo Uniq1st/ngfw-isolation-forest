@@ -1,7 +1,5 @@
 import pandas as pd
 import numpy as np
-from sklearn.preprocessing import LabelEncoder
-from pathlib import Path
 
 class NSLKDDLoader:
     """Load and preprocess NSL-KDD dataset."""
@@ -18,53 +16,57 @@ class NSLKDDLoader:
         Returns:
             List of flow dicts, list of labels
         """
-        # Define column names (from NSL-KDD documentation)
-        columns = [
-            'duration', 'protocol_type', 'service', 'flag', 'src_bytes', 'dst_bytes',
-            'land', 'wrong_fragment', 'urgent', 'hot', 'num_failed_logins',
-            'logged_in', 'num_compromised', 'root_shell', 'su_attempted',
-            'num_root', 'num_file_creations', 'num_shells', 'num_access_files',
-            'num_outbound_cmds', 'is_host_login', 'is_guest_login',
-            'count', 'srv_count', 'serror_rate', 'srv_serror_rate',
-            'rerror_rate', 'srv_rerror_rate', 'same_srv_rate',
-            'diff_srv_rate', 'srv_diff_host_rate',
-            'dst_host_count', 'dst_host_srv_count', 'dst_host_same_srv_rate',
-            'dst_host_diff_srv_rate', 'dst_host_same_src_port_rate',
-            'dst_host_srv_diff_host_rate', 'dst_host_serror_rate',
-            'dst_host_srv_serror_rate', 'dst_host_rerror_rate',
-            'dst_host_srv_rerror_rate', 'label'
-        ]
+        # Read the file with proper handling
+        lines = []
+        with open(file_path, 'r') as f:
+            for line in f:
+                line = line.strip()
+                if line:
+                    lines.append(line)
         
-        # Load CSV
-        df = pd.read_csv(file_path, names=columns, header=None)
-        
-        if sample_size:
-            df = df.sample(n=sample_size, random_state=42)
-        
-        # Extract labels (1 = attack, 0 = normal)
-        labels = (df['label'] != 'normal').astype(int).tolist()
-        
-        # Convert to flow record format (compatible with feature_extraction.py)
+        # Parse CSV manually to be robust
         flows = []
-        for idx, row in df.iterrows():
-            flow = {
-                'duration': float(row['duration']),
-                'protocol': NSLKDDLoader._encode_protocol(row['protocol_type']),
-                'protocol_name': row['protocol_type'],
-                'pkt_sizes': [int(row['src_bytes']), int(row['dst_bytes'])],
-                'inter_arrival_times': [float(row['duration'] / max(1, row['count']))],
-                'bytes_forward': int(row['src_bytes']),
-                'bytes_reverse': int(row['dst_bytes']),
-                'packet_count': int(row['count']),
-                'src_bytes': int(row['src_bytes']),
-                'dst_bytes': int(row['dst_bytes']),
-                'hot': int(row['hot']),
-                'num_failed_logins': int(row['num_failed_logins']),
-                'serror_rate': float(row['serror_rate']),
-                'rerror_rate': float(row['rerror_rate']),
-                'same_srv_rate': float(row['same_srv_rate']),
-            }
-            flows.append(flow)
+        labels = []
+        
+        for line in lines:
+            parts = line.split(',')
+            if len(parts) < 42:
+                continue
+            
+            try:
+                # Parse the columns
+                duration = float(parts[0])
+                protocol = parts[1].strip()
+                src_bytes = float(parts[4])
+                dst_bytes = float(parts[5])
+                count = float(parts[22])
+                label = parts[-2].strip()  # Label is second-to-last column
+                
+                # Create flow record
+                flow = {
+                    'duration': duration,
+                    'protocol': NSLKDDLoader._encode_protocol(protocol),
+                    'protocol_name': protocol,
+                    'pkt_sizes': [src_bytes, dst_bytes] if src_bytes > 0 or dst_bytes > 0 else [1, 1],
+                    'inter_arrival_times': [max(0.001, duration / max(1, count))],
+                    'bytes_forward': src_bytes,
+                    'bytes_reverse': dst_bytes,
+                    'packet_count': int(count),
+                }
+                flows.append(flow)
+                
+                # Extract label (1 = attack, 0 = normal)
+                is_attack = 0 if label == 'normal' else 1
+                labels.append(is_attack)
+                
+            except (ValueError, IndexError):
+                continue
+        
+        # Sample if requested
+        if sample_size and len(flows) > sample_size:
+            indices = np.random.choice(len(flows), sample_size, replace=False)
+            flows = [flows[i] for i in indices]
+            labels = [labels[i] for i in indices]
         
         return flows, labels
     

@@ -1,0 +1,16 @@
+{
+  "precision": 0.8202,
+  "recall": 0.1589,
+  "f1_score": 0.2662,
+  "fpr_percent": 4.6,
+  "fnr_percent": 84.11,
+  "roc_auc": 0.785,
+  "true_positives": 2039,
+  "false_positives": 447,
+  "true_negatives": 9264,
+  "false_negatives": 10794,
+  "total_anomalies": 12833,
+  "total_normal": 9711,
+  "dataset": "NSL-KDD",
+  "model": "Isolation Forest"
+}
