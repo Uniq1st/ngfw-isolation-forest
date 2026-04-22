@@ -1,0 +1,7 @@
+scenario,system,precision,recall,f1_score,fpr_percent
+Port Scanning,Rule-Based Baseline,0.84,0.71,0.77,9.1
+DoS/DDoS,Rule-Based Baseline,0.91,0.88,0.89,5.4
+Brute-Force Auth,Rule-Based Baseline,0.79,0.65,0.71,11.3
+Port Scanning,ML-Integrated NGFW,0.91,0.87,0.89,6.3
+DoS/DDoS,ML-Integrated NGFW,0.95,0.93,0.94,3.9
+Brute-Force Auth,ML-Integrated NGFW,0.88,0.82,0.85,7.6
