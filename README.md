@@ -64,3 +64,65 @@ ngfw-isolation-forest/
 - **rules/**: Generated Suricata drop rules for blocking anomalies
 - **results/**: Performance evaluation metrics (precision, recall, F1-score, false positive rate)
 - **docs/**: Final research report and documentation
+
+## Quick Start
+
+1. **Install dependencies:**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+2. **Train the model:**
+   ```bash
+   python3 src/train.py
+   ```
+
+3. **Run the detection pipeline:**
+   ```bash
+   python3 src/main.py
+   ```
+
+4. **Check generated rules:**
+   ```bash
+   cat rules/ngfw_dynamic.rules
+   ```
+
+## Usage
+
+### Training
+The model is trained on baseline (normal) network traffic. Modify `src/train.py` to load your own PCAP files:
+```python
+baseline_flows = extract_features(your_pcap_data)
+detector = NGFWAnomalyDetector()
+detector.train(baseline_flows)
+```
+
+### Detection
+The pipeline monitors network flows and flags anomalies:
+```python
+from src.anomaly_detector import NGFWAnomalyDetector
+detector = NGFWAnomalyDetector()
+detector.load("models/ngfw_detector.pkl")
+predictions = detector.predict(features)  # Returns 1 for anomaly, 0 for normal
+```
+
+### Response
+Detected anomalies automatically generate Suricata drop rules and are saved to `rules/ngfw_dynamic.rules`.
+
+## Documentation
+- See [DESIGN.md](DESIGN.md) for architecture and design rationale
+- See [TESTING.md](TESTING.md) for evaluation methodology and results
+- See `docs/Final_Report_CISC699_Upreti.docx` for the complete research report
+
+## Performance
+The ML-integrated NGFW achieves:
+- **Port Scanning**: 89% F1 (vs 77% baseline), 6.3% FPR (vs 9.1%)
+- **DoS/DDoS**: 94% F1 (vs 89% baseline), 3.9% FPR (vs 5.4%)
+- **Brute-Force**: 85% F1 (vs 71% baseline), 7.6% FPR (vs 11.3%)
+- **Response latency**: 2.3 seconds average
+
+## License
+Open source
+
+## Contact
+Unique Upreti | upreti.unique@gmail.com
