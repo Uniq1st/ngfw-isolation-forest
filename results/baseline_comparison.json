@@ -1,0 +1,46 @@
+[
+  {
+    "model": "Random Forest",
+    "precision": 0.9785,
+    "recall": 0.6039,
+    "f1_score": 0.7469,
+    "fpr_percent": 1.73,
+    "tp": 683,
+    "fp": 15,
+    "tn": 854,
+    "fn": 448
+  },
+  {
+    "model": "One-Class SVM",
+    "precision": 0.9777,
+    "recall": 0.6198,
+    "f1_score": 0.7587,
+    "fpr_percent": 1.84,
+    "tp": 701,
+    "fp": 16,
+    "tn": 853,
+    "fn": 430
+  },
+  {
+    "model": "Local Outlier Factor",
+    "precision": 0.8843,
+    "recall": 0.7905,
+    "f1_score": 0.8347,
+    "fpr_percent": 13.46,
+    "tp": 894,
+    "fp": 117,
+    "tn": 752,
+    "fn": 237
+  },
+  {
+    "model": "Isolation Forest",
+    "precision": 0.7508,
+    "recall": 0.2131,
+    "f1_score": 0.332,
+    "fpr_percent": 9.21,
+    "tp": 241,
+    "fp": 80,
+    "tn": 789,
+    "fn": 890
+  }
+]

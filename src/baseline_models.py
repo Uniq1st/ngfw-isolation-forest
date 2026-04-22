@@ -67,7 +67,7 @@ class BaselineModels:
         normal_mask = y_train == 0
         X_normal = X_train[normal_mask]
         
-        ocs = OneClassSVM(nu=0.05, kernel='rbf', random_state=42)
+        ocs = OneClassSVM(nu=0.05, kernel='rbf')
         ocs.fit(X_normal)
         
         # Predict: -1 = anomaly, 1 = normal
